@@ -33,14 +33,15 @@ namespace AsyncAssert
                 "Asserting that function should be true within {0} seconds at {1}", within.TotalSeconds, DateTime.UtcNow);
 
             var limit = DateTime.Now.Add(within);
-            while (limit > DateTime.Now)
+            do
             {
                 if (GetResult(function))
                 {
                     return;
                 }
-                Thread.Sleep((int)(interval == null ? 20 : interval.Value.TotalMilliseconds));
-            }
+                Thread.Sleep((int) (interval == null ? 20 : interval.Value.TotalMilliseconds));
+            } while (limit > DateTime.Now);
+
             string inconclusiveMsg = getInconclusiveMsg != null ? getInconclusiveMsg() : "No inconclusive msg";
             if (inconclusive != null && inconclusive())
             {
