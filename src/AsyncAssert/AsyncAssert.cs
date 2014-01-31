@@ -4,6 +4,7 @@ namespace AsyncAssert
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using NUnit.Framework;
 
@@ -22,12 +23,16 @@ namespace AsyncAssert
             TrueWithin(function,within,(TimeSpan?)null,getFailMsg);
         }
 
-        public static void TrueWithin(Func<bool> func, TimeSpan timeSpan, Func<bool> inconclusive,Func<string> inconclusiveMsg )
+        public static void TrueWithin(Func<bool> func, TimeSpan timeSpan, Func<bool> inconclusive,Func<string> inconclusiveMsg,IList<Action> failureActions = null)
         {
-            TrueWithin(func, timeSpan, (TimeSpan?)null,(Func<string>) null, inconclusive, inconclusiveMsg);
+            TrueWithin(func, timeSpan, (TimeSpan?)null,(Func<string>) null, inconclusive, inconclusiveMsg,failureActions);
         }
 
-        public static void TrueWithin(Func<bool> function, TimeSpan within, TimeSpan? interval = null, Func<string> getFailMsg = null, Func<bool> inconclusive = null, Func<string> getInconclusiveMsg = null)
+        public static void TrueWithin(Func<bool> function, TimeSpan within, TimeSpan? interval = null, 
+            Func<string> getFailMsg = null, 
+            Func<bool> inconclusive = null, 
+            Func<string> getInconclusiveMsg = null,
+            IList<Action> failureActions = null)
         {
             Logger.Trace(
                 "Asserting that function should be true within {0} seconds at {1}", within.TotalSeconds, DateTime.UtcNow);
@@ -39,6 +44,8 @@ namespace AsyncAssert
                 {
                     return;
                 }
+                failureActions = failureActions ?? new Action[0];
+                failureActions.ToList().ForEach(x=>x());
                 Thread.Sleep((int) (interval == null ? 20 : interval.Value.TotalMilliseconds));
             } while (limit > DateTime.Now);
 
