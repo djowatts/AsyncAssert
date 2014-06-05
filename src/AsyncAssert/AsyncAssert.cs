@@ -54,8 +54,21 @@ namespace AsyncAssert
             {
                 Assert.Inconclusive(inconclusiveMsg);
             }
-            string failMsg = getFailMsg != null ? getFailMsg() : function.ToString();
+
+            string failMsg = getFailMsg != null ? TryGet(getFailMsg): function.ToString();
             Assert.Fail("Expected function to be true within {0} seconds but it wasn't at {1} [{2}]", within.TotalSeconds, DateTime.UtcNow, failMsg);
+        }
+
+        private static string TryGet(Func<string> getFailMsg)
+        {
+            try
+            {
+                return getFailMsg();
+            }
+            catch
+            {
+                return "error getting error message";
+            }
         }
 
         private static bool GetResult(Func<bool> function)
