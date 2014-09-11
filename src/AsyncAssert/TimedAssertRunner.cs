@@ -35,6 +35,31 @@ namespace AsyncAssert
             TrueBeforeTimeout(() => actual() == expected(),
                 () => string.Format("Expected equal but was {0} vs {1}", actual(), expected()));
         }
+
+        public void EqualBeforeTimeout(Func<int> actual, Func<int> expected)
+        {
+            TrueBeforeTimeout(() => actual() == expected(),
+                () => string.Format("Expected equal but was {0} vs {1}", actual(), expected()));
+        }
+
+        public void EqualBeforeTimeout(Func<double> actual, Func<double> expected)
+        {
+            TrueBeforeTimeout(() => actual() == expected(),
+                () => string.Format("Expected equal but was {0} vs {1}", actual(), expected()));
+        }
+
+        public void EqualBeforeTimeout(Func<decimal> actual, Func<decimal> expected)
+        {
+            TrueBeforeTimeout(() => actual() == expected(),
+                () => string.Format("Expected equal but was {0} vs {1}", actual(), expected()));
+        }
+
+        public void EqualBeforeTimeout(Func<float> actual, Func<float> expected)
+        {
+            TrueBeforeTimeout(() => actual() == expected(),
+                () => string.Format("Expected equal but was {0} vs {1}", actual(), expected()));
+        }
+
         public void TrueBeforeTimeout(Func<bool> test, Func<bool> inconclusiveTest, Func<string> inconclusiveMessage)
         {
             AsyncAssert.TrueWithin(test, _waitTime.Remainder(), inconclusiveTest, inconclusiveMessage);
