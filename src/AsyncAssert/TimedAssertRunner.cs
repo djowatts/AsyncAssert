@@ -32,7 +32,7 @@ namespace AsyncAssert
 
         public void EqualBeforeTimeout(Func<string> actual, Func<string> expected)
         {
-            TrueBeforeTimeout(() => actual() == expected(),
+            TrueBeforeTimeout(() => actual().Equals(expected()),
                 () => string.Format("Expected equal but was {0} vs {1}", actual(), expected()));
         }
 
