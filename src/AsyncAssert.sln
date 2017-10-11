@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsyncAssert", "AsyncAssert\AsyncAssert.csproj", "{9ACAF710-A99D-49FC-B1CF-03C1841A82D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsyncAssert.Xunit", "AsyncAssert.Xunit\AsyncAssert.Xunit.csproj", "{F4A6E8FA-89EE-46E7-8FE7-7A4E2FF2B370}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{9ACAF710-A99D-49FC-B1CF-03C1841A82D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9ACAF710-A99D-49FC-B1CF-03C1841A82D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9ACAF710-A99D-49FC-B1CF-03C1841A82D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4A6E8FA-89EE-46E7-8FE7-7A4E2FF2B370}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4A6E8FA-89EE-46E7-8FE7-7A4E2FF2B370}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4A6E8FA-89EE-46E7-8FE7-7A4E2FF2B370}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4A6E8FA-89EE-46E7-8FE7-7A4E2FF2B370}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {57827350-3071-4A19-8A60-6B2EB576D389}
 	EndGlobalSection
 EndGlobal
