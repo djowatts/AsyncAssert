@@ -6,7 +6,7 @@ namespace AsyncAssert
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
-    using Xunit;
+    using NUnit.Framework;
 
     public static class AsyncAssert//this class is required because we are in publish and subscribe land (opposed to call and reply)
     {
@@ -25,11 +25,13 @@ namespace AsyncAssert
 
         public static void TrueWithin(Func<bool> func, TimeSpan timeSpan, Func<bool> inconclusive,Func<string> inconclusiveMsg,IList<Action> failureActions = null)
         {
-            TrueWithin(func, timeSpan, (TimeSpan?)null,(Func<string>) null, failureActions);
+            TrueWithin(func, timeSpan, (TimeSpan?)null,(Func<string>) null, inconclusive, inconclusiveMsg,failureActions);
         }
 
         public static void TrueWithin(Func<bool> function, TimeSpan within, TimeSpan? interval = null, 
-            Func<string> getFailMsg = null,
+            Func<string> getFailMsg = null, 
+            Func<bool> inconclusive = null, 
+            Func<string> getInconclusiveMsg = null,
             IList<Action> failureActions = null)
         {
             Logger.Trace(
@@ -46,9 +48,15 @@ namespace AsyncAssert
                 failureActions.ToList().ForEach(x=>x());
                 Thread.Sleep((int) (interval == null ? 20 : interval.Value.TotalMilliseconds));
             } while (limit > DateTime.Now);
-            
+
+            string inconclusiveMsg = getInconclusiveMsg != null ? getInconclusiveMsg() : "No inconclusive msg";
+            if (inconclusive != null && inconclusive())
+            {
+                Assert.Inconclusive(inconclusiveMsg);
+            }
+
             string failMsg = getFailMsg != null ? TryGet(getFailMsg): function.ToString();
-            Assert.True(false, $"Expected function to be true within {within.TotalSeconds} seconds but it wasn't at {DateTime.UtcNow} [{failMsg}]");
+            Assert.Fail("Expected function to be true within {0} seconds but it wasn't at {1} [{2}]", within.TotalSeconds, DateTime.UtcNow, failMsg);
         }
 
         private static string TryGet(Func<string> getFailMsg)
@@ -103,7 +111,7 @@ namespace AsyncAssert
             {
                 if (function())
                 {
-                    Assert.True(false, $"Expected function to remain false for {timespan.TotalSeconds} seconds but it wasn't");
+                    Assert.Fail("Expected function to remain false for {0} seconds but it wasn't", timespan.TotalSeconds);
                 }
                 Thread.Sleep(50);
             }
@@ -116,7 +124,7 @@ namespace AsyncAssert
             {
                 if (!function())
                 {
-                    Assert.True(false, $"Expected function to remain false for {timespan.TotalSeconds} seconds but it wasn't");
+                    Assert.Fail("Expected function to remain false for {0} seconds but it wasn't", timespan.TotalSeconds);
                 }
                 Thread.Sleep(50);
             }
@@ -133,13 +141,13 @@ namespace AsyncAssert
                 {
                     if (DateTime.Now < lowerLimit)
                     {
-                        Assert.True(false, $"Expected function to remain false for {lower.TotalSeconds} seconds, but was true after {DateTime.Now.Subtract(start).TotalMilliseconds} milliseconds");
+                        Assert.Fail("Expected function to remain false for {0} seconds, but was true after {1} milliseconds", lower.TotalSeconds, DateTime.Now.Subtract(start).TotalMilliseconds);
                     }
                     return;
                 }
                 Thread.Sleep(25);
             }
-            Assert.True(false, $"Expected function to be true before {upper.TotalSeconds} seconds but it wasn't");
+            Assert.Fail("Expected function to be true before {0} seconds but it wasn't", upper.TotalSeconds);
         }
     }
 }
