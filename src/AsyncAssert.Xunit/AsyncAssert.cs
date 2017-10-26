@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace AsyncAssert.Xunit
@@ -24,6 +25,27 @@ namespace AsyncAssert.Xunit
         public static void TrueWithin(Func<bool> func, TimeSpan timeSpan, Func<bool> inconclusive, Func<string> inconclusiveMsg, IList<Action> failureActions = null)
         {
             TrueWithin(func, timeSpan, (TimeSpan?)null, (Func<string>)null, failureActions);
+        }
+
+        public static async void TrueWithinAsync(Func<Task<bool>> function, TimeSpan within, TimeSpan? interval = null, Func<Task<string>> getFailMsg = null, IList<Func<Task>> failureActions = null)
+        {
+            Logger.Trace(
+                "Asserting that function should be true within {0} seconds at {1}", within.TotalSeconds, DateTime.UtcNow);
+
+            var limit = DateTime.Now.Add(within);
+            do
+            {
+                if (await function())
+                {
+                    return;
+                }
+                failureActions = failureActions ?? new Func<Task>[0];
+                failureActions.ToList().ForEach(async x => await x());
+                Thread.Sleep((int)(interval == null ? 20 : interval.Value.TotalMilliseconds));
+            } while (limit > DateTime.Now);
+
+            string failMsg = getFailMsg != null ? await getFailMsg() : function.ToString();
+            Assert.True(false, $"Expected function to be true within {within.TotalSeconds} seconds but it wasn't at {DateTime.UtcNow} [{failMsg}]");
         }
 
         public static void TrueWithin(Func<bool> function, TimeSpan within, TimeSpan? interval = null,
